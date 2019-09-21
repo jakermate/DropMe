@@ -1,0 +1,9 @@
+// options class with default options
+export default class Options{
+    constructor(){
+        this.reset = false // will the element be replaced
+        this.spin = false // will there be spin to the falling element
+        this.timeToReset = 3000  // time in ms until object gets replaced from where it fell
+        this.speed = 20 // pixels per second of acceleration
+    } 
+}
