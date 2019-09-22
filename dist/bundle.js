@@ -261,14 +261,14 @@ function dropMe(event) {
   PLACEHOLDERS.createPlaceholder(target); // pass in dropped element to clone for placeholder
   // place target element in CONTAINER object
 
-  CONTAINER.addNewElement(target); // place target in container element
+  DROPBOX.addNewElement(target); // place target in container element
 
-  CONTAINER.placeInContainerElement(target, dropContainer);
+  DROPBOX.placeInContainerElement(target, dropContainer);
   console.log(`moving ${target.getAttribute('data-drop-id')}`);
 } // setup contstants
 
 
-const CONTAINER = new _container__WEBPACK_IMPORTED_MODULE_1__["default"](); // container for currently falling objects
+const DROPBOX = new _container__WEBPACK_IMPORTED_MODULE_1__["default"](); // container for currently falling objects
 
 const PLACEHOLDERS = new _placeholders__WEBPACK_IMPORTED_MODULE_2__["default"](); // container for placeholder elements inserted into dropped elements positiones
 
@@ -295,11 +295,13 @@ class Options {
   constructor() {
     this.reset = false; // will the element be replaced
 
-    this.spin = false; // will there be spin to the falling element
+    this.spin = 0; // will there be spin to the falling element
 
     this.timeToReset = 3000; // time in ms until object gets replaced from where it fell
 
     this.speed = 20; // pixels per second of acceleration
+
+    this.pop = 40;
   }
 
 }

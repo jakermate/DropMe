@@ -1,7 +1,7 @@
 // options object instantiated for each element, contains any data attributes
 // that change the default drop options
 import Options from './options'
-import Container from './container'
+import DropBox from './container'
 import Placeholders from './placeholders'
 import Dimensioner from './dimensioner'
 
@@ -99,16 +99,16 @@ function dropMe(event){
     target = restyleElement(target)
     PLACEHOLDERS.createPlaceholder(target) // pass in dropped element to clone for placeholder
     // place target element in CONTAINER object
-    CONTAINER.addNewElement(target)
+    DROPBOX.addNewElement(target)
     // place target in container element
-    CONTAINER.placeInContainerElement(target, dropContainer)
+    DROPBOX.placeInContainerElement(target, dropContainer)
     console.log(`moving ${target.getAttribute('data-drop-id')}`)
 }
 
 
 
 // setup contstants
-const CONTAINER = new Container() // container for currently falling objects
+const DROPBOX = new DropBox() // container for currently falling objects
 const PLACEHOLDERS = new Placeholders() // container for placeholder elements inserted into dropped elements positiones
 const dimensioner = new Dimensioner()
 
