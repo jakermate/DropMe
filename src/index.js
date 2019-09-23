@@ -34,20 +34,7 @@ function __runscript__(optionObject){
     console.log(dropElements)    
     
 
-    // make sure BODY element is positioned so that dropContainer may be absolutely positioned inside it
-    if(document.body.style.position !== 'relative' | 'absolute | fixed | sticky'){
-        document.body.style.position = 'relative'
-    }
-    // create element to append dropped elements into
-    const dropContainer = document.createElement('div')
-    // set dropcontainer id
-    dropContainer.id = 'drop-container'
-    // set dropcontainer styles
-    dropContainer.setAttribute('style', // position and size of container mimick the body element
-    `position: absolute; height: 100vh; width: 100vw; top: 0; z-index: 9999; pointer-events: none`
-)   // append the dropcontainer to end of body tag
-    document.body.appendChild(dropContainer)
-    // set drop container styles
+    
   
 
 }
@@ -87,7 +74,6 @@ function restyleElement(element){
     
 // FUNCTION TO INITIATE DROP 
 function dropMe(event){
-    let dropContainer = document.getElementById('drop-container')
     console.log('dropping')
     // store target element in variable using event
     let target = event.target
@@ -95,19 +81,17 @@ function dropMe(event){
     // crates new placeholder div with data-drop-id set as main ID and styled dimensions
     // based on target elements offset dimensions
     let placeholderEl = returnPlaceholder(event.target.getAttribute('data-drop-id'), dimensioner.returnDimensionObject(target))
-    //apply computed styles as dictated styles for element being moved
-    target = restyleElement(target)
+
     PLACEHOLDERS.createPlaceholder(target) // pass in dropped element to clone for placeholder
     // place target element in CONTAINER object
-    DROPBOX.addNewElement(target)
+    DROPBOX.addNewElement(target, OPTIONS)
     // place target in container element
-    DROPBOX.placeInContainerElement(target, dropContainer)
     console.log(`moving ${target.getAttribute('data-drop-id')}`)
 }
 
 
 
-// setup contstants
+const OPTIONS = new Options()
 const DROPBOX = new DropBox() // container for currently falling objects
 const PLACEHOLDERS = new Placeholders() // container for placeholder elements inserted into dropped elements positiones
 const dimensioner = new Dimensioner()

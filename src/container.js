@@ -1,19 +1,18 @@
-
+import Element from './Element'
 export default class Container{
     constructor(){
         this.elements = []
     }
     // adds new element to array and returns index
-    addNewElement(element){
-        this.elements.push(element)
-        return this.elements.indexOf(element)
+    addNewElement(element, optionsObject){
+        let newEl = new Element(element, optionsObject) // pass in dom element and options to new Element object
+        this.elements.push(newEl)
+        return this.elements.indexOf(newEl)
     }
     removeElement(index){
         this.elements.splice(index,1)
     }
-    placeInContainerElement(target, dropContainer){
-        dropContainer.append(target)
-    }
+    
     getIndex(dataDropId){
         return this.elements.indexOf(dataDropId)
     }

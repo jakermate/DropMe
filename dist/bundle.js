@@ -86,6 +86,106 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/Element.js":
+/*!************************!*\
+  !*** ./src/Element.js ***!
+  \************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Element; });
+class Element {
+  constructor(element, options) {
+    // load options
+    this.spin = options.spin;
+    this.speed = options.speed;
+    this.popUp = options.popUp;
+    this.popSide = options.popSide;
+    this.reset = options.reset;
+    this.timeToRESET = options.timeToReset;
+    this.ELEMENT = element;
+    this.CLONE = this.cloneElement(this.ELEMENT);
+    this.TICKRATE = 60; // animation update interval
+
+    this.running = false; // initial running state
+
+    this.elementID = element.getAttribute('data-drop-id'); // element ID
+
+    this.x = 0;
+    this.y = 0;
+    this.velX = this.popSide;
+    this.velY = -this.popUp;
+    this.rotation = 0;
+
+    this.__starttimer__(); // start time upon initialization
+
+  }
+
+  clockTick() {
+    // translate and rotation occurs here, called repeatedly by __starttime__
+    if (this.running === false) {
+      // stop simulation 
+      clearInterval(this.sim);
+    } // perform velocity adjustments
+
+
+    this.velY += this.speed; // perform translations
+
+    this.y += this.velY / this.TICKRATE;
+    this.rotation += this.rotation; // apply styles
+
+    this.CLONE.style.transform = `translateY(${this.y}px)`; // if element has fallen length greater than height of page, stop timer
+
+    if (this.y > window.innerHeight) {
+      this.__stopTimer__();
+    }
+  }
+
+  __starttimer__() {
+    this.running = true;
+    this.addClone();
+    this.sim = setInterval(this.clockTick.bind(this), 1000 / this.TICKRATE);
+  }
+
+  __stopTimer__() {
+    // stop tickrate
+    this.running = false;
+    this.removeClone();
+    return true; // true returned for element being killed
+  }
+
+  placeInContainerElement(target, dropContainer) {
+    dropContainer.append(target);
+  }
+
+  cloneElement(element) {
+    let clone = element.cloneNode();
+    clone.style.position = 'absolute';
+    clone.style.width = this.ELEMENT.offsetWidth + 'px';
+    clone.style.height = this.ELEMENT.offsetHeight + 'px';
+    clone.style.top = this.ELEMENT.getBoundingClientRect().top;
+    +'px';
+    clone.style.left = this.ELEMENT.getBoundingClientRect().left + 'px';
+    return clone;
+  }
+
+  addClone() {
+    this.ELEMENT.style.visibility = 'hidden'; // set original to hidden, but still occupying space
+
+    this.ELEMENT.parentNode.insertBefore(this.CLONE, this.ELEMENT);
+  }
+
+  removeClone() {
+    this.CLONE.parentNode.removeChild(this.CLONE);
+    this.ELEMENT.style.visibility = 'visible';
+  }
+
+}
+
+/***/ }),
+
 /***/ "./src/container.js":
 /*!**************************!*\
   !*** ./src/container.js ***!
@@ -96,23 +196,23 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Container; });
+/* harmony import */ var _Element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Element */ "./src/Element.js");
+
 class Container {
   constructor() {
     this.elements = [];
   } // adds new element to array and returns index
 
 
-  addNewElement(element) {
-    this.elements.push(element);
-    return this.elements.indexOf(element);
+  addNewElement(element, optionsObject) {
+    let newEl = new _Element__WEBPACK_IMPORTED_MODULE_0__["default"](element, optionsObject); // pass in dom element and options to new Element object
+
+    this.elements.push(newEl);
+    return this.elements.indexOf(newEl);
   }
 
   removeElement(index) {
     this.elements.splice(index, 1);
-  }
-
-  placeInContainerElement(target, dropContainer) {
-    dropContainer.append(target);
   }
 
   getIndex(dataDropId) {
@@ -201,21 +301,7 @@ function __runscript__(optionObject) {
   } // log the dropElements object
 
 
-  console.log(dropElements); // make sure BODY element is positioned so that dropContainer may be absolutely positioned inside it
-
-  if (document.body.style.position !== 'relative' | 'absolute | fixed | sticky') {
-    document.body.style.position = 'relative';
-  } // create element to append dropped elements into
-
-
-  const dropContainer = document.createElement('div'); // set dropcontainer id
-
-  dropContainer.id = 'drop-container'; // set dropcontainer styles
-
-  dropContainer.setAttribute('style', // position and size of container mimick the body element
-  `position: absolute; height: 100vh; width: 100vw; top: 0; z-index: 9999; pointer-events: none`); // append the dropcontainer to end of body tag
-
-  document.body.appendChild(dropContainer); // set drop container styles
+  console.log(dropElements);
 } // function to create new element for contaiing drop objects (append to end of body element)
 
 
@@ -249,25 +335,21 @@ function restyleElement(element) {
 
 
 function dropMe(event) {
-  let dropContainer = document.getElementById('drop-container');
   console.log('dropping'); // store target element in variable using event
 
   let target = event.target; // crates new placeholder div with data-drop-id set as main ID and styled dimensions
   // based on target elements offset dimensions
 
-  let placeholderEl = returnPlaceholder(event.target.getAttribute('data-drop-id'), dimensioner.returnDimensionObject(target)); //apply computed styles as dictated styles for element being moved
-
-  target = restyleElement(target);
+  let placeholderEl = returnPlaceholder(event.target.getAttribute('data-drop-id'), dimensioner.returnDimensionObject(target));
   PLACEHOLDERS.createPlaceholder(target); // pass in dropped element to clone for placeholder
   // place target element in CONTAINER object
 
-  DROPBOX.addNewElement(target); // place target in container element
+  DROPBOX.addNewElement(target, OPTIONS); // place target in container element
 
-  DROPBOX.placeInContainerElement(target, dropContainer);
   console.log(`moving ${target.getAttribute('data-drop-id')}`);
-} // setup contstants
+}
 
-
+const OPTIONS = new _options__WEBPACK_IMPORTED_MODULE_0__["default"]();
 const DROPBOX = new _container__WEBPACK_IMPORTED_MODULE_1__["default"](); // container for currently falling objects
 
 const PLACEHOLDERS = new _placeholders__WEBPACK_IMPORTED_MODULE_2__["default"](); // container for placeholder elements inserted into dropped elements positiones
@@ -299,9 +381,10 @@ class Options {
 
     this.timeToReset = 3000; // time in ms until object gets replaced from where it fell
 
-    this.speed = 20; // pixels per second of acceleration
+    this.speed = 30; // pixels per second of acceleration
 
-    this.pop = 40;
+    this.popUp = 500;
+    this.popSide = 300;
   }
 
 }
