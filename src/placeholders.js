@@ -1,4 +1,4 @@
-export default class Placeholders{
+export default class Placeholders{ // leaving in case of use-cases where a blank placeholder might be necessary
     constructor(){
         this.placeholders = []
         this.indexes = {
