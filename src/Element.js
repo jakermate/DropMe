@@ -10,7 +10,9 @@ export default class Element{
         this.popUp = optionsObj.popUp
         this.popSide = optionsObj.popSide
         this.reset = optionsObj.reset
-        this.timeToRESET = optionsObj.timeToReset
+        this.resetDelay = optionsObj.resetDelay
+        this.shadow = optionsObj.shadow
+        
 
 
         this.ELEMENT = element
@@ -21,7 +23,7 @@ export default class Element{
         this.running = false // initial running state
 
         this.elementID = element.getAttribute('data-drop-id') // element ID
-
+        // this.CLONE.style.boxShadow = `5px 5px 40px rgba(0,0,0,.3)`
 
         this.x = 0
         this.y = 0
@@ -40,6 +42,7 @@ export default class Element{
         let optionsObj = new Options(element)
         return optionsObj
     }
+
 
 
     clockTick(){ // translate and rotation occurs here, called repeatedly by __starttime__
@@ -67,6 +70,8 @@ export default class Element{
         }
     }
 
+
+    // run simulation
     __starttimer__(){
         this.running = true
         this.addClone()
@@ -77,6 +82,9 @@ export default class Element{
         this.removeClone()
         return true // true returned for element being killed
     }
+
+
+
     placeInContainerElement(target, dropContainer){
         dropContainer.append(target)
     }
@@ -96,6 +104,11 @@ export default class Element{
     removeClone(){
         this.CLONE.parentNode.removeChild(this.CLONE)
         this.ELEMENT.style.visibility = 'visible'
+    }
+    resetDelay(){
+        setTimeout(()=>{
+
+        }, this.resetDelay)
     }
 
 }
