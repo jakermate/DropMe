@@ -1,17 +1,13 @@
 // options object instantiated for each element, contains any data attributes
 // that change the default drop options
 import Options from './options'
-import DropBox from './container'
+import DropBox from './ElementContainer'
 import Placeholders from './placeholders'
 import Dimensioner from './dimensioner'
 
 
 function __runscript__(optionObject){
     
-    // conditionally set options id optionObject argument is not undefined
-    if(optionObject){
-//
-    }
     // find all elements with a drop-me class and create nodelist
     const dropNodes = document.getElementsByClassName('drop-me')
     
@@ -84,14 +80,13 @@ function dropMe(event){
 
     PLACEHOLDERS.createPlaceholder(target) // pass in dropped element to clone for placeholder
     // place target element in CONTAINER object
-    DROPBOX.addNewElement(target, OPTIONS)
+    DROPBOX.addNewElement(target)
     // place target in container element
     console.log(`moving ${target.getAttribute('data-drop-id')}`)
 }
 
 
 
-const OPTIONS = new Options()
 const DROPBOX = new DropBox() // container for currently falling objects
 const PLACEHOLDERS = new Placeholders() // container for placeholder elements inserted into dropped elements positiones
 const dimensioner = new Dimensioner()

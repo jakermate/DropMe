@@ -96,15 +96,19 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Element; });
+/* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./options */ "./src/options.js");
+
 class Element {
-  constructor(element, options) {
+  constructor(element) {
     // load options
-    this.spin = options.spin;
-    this.speed = options.speed;
-    this.popUp = options.popUp;
-    this.popSide = options.popSide;
-    this.reset = options.reset;
-    this.timeToRESET = options.timeToReset;
+    let optionsObj = this.buildOptionsObject(element); // build and return an object
+
+    this.spin = optionsObj.spin;
+    this.speed = optionsObj.speed;
+    this.popUp = optionsObj.popUp;
+    this.popSide = optionsObj.popSide;
+    this.reset = optionsObj.reset;
+    this.timeToRESET = optionsObj.timeToReset;
     this.ELEMENT = element;
     this.CLONE = this.cloneElement(this.ELEMENT);
     this.TICKRATE = 60; // animation update interval
@@ -115,12 +119,18 @@ class Element {
 
     this.x = 0;
     this.y = 0;
+    this.orientation = 0;
     this.velX = this.popSide;
     this.velY = -this.popUp;
-    this.rotation = 0;
 
     this.__starttimer__(); // start time upon initialization
 
+  } // build options object from data-drop attributes
+
+
+  buildOptionsObject(element) {
+    let optionsObj = new _options__WEBPACK_IMPORTED_MODULE_0__["default"](element);
+    return optionsObj;
   }
 
   clockTick() {
@@ -133,10 +143,15 @@ class Element {
 
     this.velY += this.speed; // perform translations
 
+    this.x += this.velX / this.TICKRATE;
     this.y += this.velY / this.TICKRATE;
-    this.rotation += this.rotation; // apply styles
+    this.orientation += this.spin / this.TICKRATE; // add spin speed to orientation
+    // apply styles
+    // apply styles by requesting new frame
 
-    this.CLONE.style.transform = `translateY(${this.y}px)`; // if element has fallen length greater than height of page, stop timer
+    requestAnimationFrame(() => {
+      this.CLONE.style.transform = `translateY(${this.y}px) translateX(${this.x}px) rotate(${this.orientation}deg)`;
+    }); // if element has fallen length greater than height of page, stop timer
 
     if (this.y > window.innerHeight) {
       this.__stopTimer__();
@@ -161,7 +176,7 @@ class Element {
   }
 
   cloneElement(element) {
-    let clone = element.cloneNode();
+    let clone = element.cloneNode(true);
     clone.style.position = 'absolute';
     clone.style.width = this.ELEMENT.offsetWidth + 'px';
     clone.style.height = this.ELEMENT.offsetHeight + 'px';
@@ -186,10 +201,10 @@ class Element {
 
 /***/ }),
 
-/***/ "./src/container.js":
-/*!**************************!*\
-  !*** ./src/container.js ***!
-  \**************************/
+/***/ "./src/ElementContainer.js":
+/*!*********************************!*\
+  !*** ./src/ElementContainer.js ***!
+  \*********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -204,8 +219,8 @@ class Container {
   } // adds new element to array and returns index
 
 
-  addNewElement(element, optionsObject) {
-    let newEl = new _Element__WEBPACK_IMPORTED_MODULE_0__["default"](element, optionsObject); // pass in dom element and options to new Element object
+  addNewElement(element) {
+    let newEl = new _Element__WEBPACK_IMPORTED_MODULE_0__["default"](element); // pass in dom element and options to new Element object
 
     this.elements.push(newEl);
     return this.elements.indexOf(newEl);
@@ -269,7 +284,7 @@ function Dimensioner() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./options */ "./src/options.js");
-/* harmony import */ var _container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./container */ "./src/container.js");
+/* harmony import */ var _ElementContainer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ElementContainer */ "./src/ElementContainer.js");
 /* harmony import */ var _placeholders__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./placeholders */ "./src/placeholders.js");
 /* harmony import */ var _dimensioner__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dimensioner */ "./src/dimensioner.js");
 // options object instantiated for each element, contains any data attributes
@@ -280,11 +295,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function __runscript__(optionObject) {
-  // conditionally set options id optionObject argument is not undefined
-  if (optionObject) {} //
   // find all elements with a drop-me class and create nodelist
-
-
   const dropNodes = document.getElementsByClassName('drop-me'); // create drop object containing all elements to be dropped
 
   const dropElements = {}; // loop through array of indexed elements with drop properties and insert into object dropElements
@@ -344,13 +355,12 @@ function dropMe(event) {
   PLACEHOLDERS.createPlaceholder(target); // pass in dropped element to clone for placeholder
   // place target element in CONTAINER object
 
-  DROPBOX.addNewElement(target, OPTIONS); // place target in container element
+  DROPBOX.addNewElement(target); // place target in container element
 
   console.log(`moving ${target.getAttribute('data-drop-id')}`);
 }
 
-const OPTIONS = new _options__WEBPACK_IMPORTED_MODULE_0__["default"]();
-const DROPBOX = new _container__WEBPACK_IMPORTED_MODULE_1__["default"](); // container for currently falling objects
+const DROPBOX = new _ElementContainer__WEBPACK_IMPORTED_MODULE_1__["default"](); // container for currently falling objects
 
 const PLACEHOLDERS = new _placeholders__WEBPACK_IMPORTED_MODULE_2__["default"](); // container for placeholder elements inserted into dropped elements positiones
 
@@ -374,17 +384,82 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Options; });
 // options class with default options
 class Options {
-  constructor() {
-    this.reset = false; // will the element be replaced
+  constructor(element) {
+    // take in element and check for data-drop attributes
+    let reset = element.dataset.dropReset;
 
-    this.spin = 0; // will there be spin to the falling element
+    switch (reset) {
+      case `true`:
+        this.reset = true;
+        break;
+
+      default:
+        this.reset = false;
+    }
+
+    let spin = element.dataset.dropSpin;
+
+    switch (spin) {
+      case `none`:
+        this.spin = 0;
+        break;
+
+      case `slow`:
+        this.spin = 100;
+        break;
+
+      case `medium`:
+        this.spin = 400;
+        break;
+
+      case `fast`:
+        this.spin = 800;
+        break;
+
+      default:
+        this.spin = 400;
+      // default set to slow spin
+    }
+
+    let speed = element.dataset.dropSpeed;
+
+    switch (speed) {
+      case `slow`:
+        this.speed = 10;
+        break;
+
+      case `medium`:
+        this.speed = 30;
+        break;
+
+      case `fast`:
+        this.speed = 50;
+        break;
+
+      default:
+        this.speed = 30;
+      // default medium
+    }
+
+    let popUp = element.dataset.pop;
+
+    switch (popUp) {
+      // popup is initial negative Y velocity 
+      case `true`:
+        this.popUp = 500;
+        break;
+
+      case `false`:
+        this.popUp = 0;
+        break;
+
+      default:
+        this.popUp = 500;
+    }
 
     this.timeToReset = 3000; // time in ms until object gets replaced from where it fell
 
-    this.speed = 30; // pixels per second of acceleration
-
-    this.popUp = 500;
-    this.popSide = 300;
+    this.popSide = 30;
   }
 
 }

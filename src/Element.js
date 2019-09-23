@@ -1,12 +1,16 @@
+import Options from './options'
+
 export default class Element{
-    constructor(element, options){
+    constructor(element){
         // load options
-        this.spin = options.spin
-        this.speed = options.speed
-        this.popUp = options.popUp
-        this.popSide = options.popSide
-        this.reset = options.reset
-        this.timeToRESET = options.timeToReset
+        let optionsObj = this.buildOptionsObject(element) // build and return an object
+
+        this.spin = optionsObj.spin
+        this.speed = optionsObj.speed
+        this.popUp = optionsObj.popUp
+        this.popSide = optionsObj.popSide
+        this.reset = optionsObj.reset
+        this.timeToRESET = optionsObj.timeToReset
 
 
         this.ELEMENT = element
@@ -21,15 +25,23 @@ export default class Element{
 
         this.x = 0
         this.y = 0
+        this.orientation = 0
 
 
         this.velX = this.popSide
         this.velY = -this.popUp
-        this.rotation = 0
 
 
         this.__starttimer__() // start time upon initialization
     }
+
+    // build options object from data-drop attributes
+    buildOptionsObject(element){
+        let optionsObj = new Options(element)
+        return optionsObj
+    }
+
+
     clockTick(){ // translate and rotation occurs here, called repeatedly by __starttime__
         if(this.running === false){ // stop simulation 
             clearInterval(this.sim)
@@ -37,11 +49,18 @@ export default class Element{
         // perform velocity adjustments
         this.velY += this.speed
 
+
         // perform translations
+        this.x += this.velX/this.TICKRATE
         this.y += this.velY/this.TICKRATE
-        this.rotation += this.rotation
+        this.orientation += this.spin/this.TICKRATE // add spin speed to orientation
         // apply styles
-        this.CLONE.style.transform = `translateY(${this.y}px)`
+
+        // apply styles by requesting new frame
+        requestAnimationFrame(()=>{
+            this.CLONE.style.transform = `translateY(${this.y}px) translateX(${this.x}px) rotate(${this.orientation}deg)`
+        })
+        
         // if element has fallen length greater than height of page, stop timer
         if(this.y > window.innerHeight){ 
             this.__stopTimer__()
@@ -62,7 +81,7 @@ export default class Element{
         dropContainer.append(target)
     }
     cloneElement(element){
-        let clone = element.cloneNode()
+        let clone = element.cloneNode(true)
         clone.style.position = 'absolute'
         clone.style.width = this.ELEMENT.offsetWidth+'px'
         clone.style.height = this.ELEMENT.offsetHeight+'px'
