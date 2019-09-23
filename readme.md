@@ -5,10 +5,10 @@ Library focused on allowing a developer to integrate a mechanic via classname wh
 
 API
 - Add the `drop-me` class to any element you wish to drop
-- `data-drop-spin` - `none`, `slow`, `medium`, `fast`
-- `data-drop-speed` - `slow`, `medium`, `fast`
-- `data-drop-reset` - `true`, `false`
-- `data-drop-pop` - `none`, `slow`, `fast`
+- `data-drop-spin` - `none`, `slow`, `medium`, `fast` - Element will rotate while falling.
+- `data-drop-speed` - `slow`, `medium`, `fast` - Y-Dimension Speed
+- `data-drop-reset` - `true`, `false` - Determines if the object resets or stays permanently off the page.
+- `data-drop-pop` - `none`, `slow`, `fast` - Will the element pop up prior to falling.
 
 
 
@@ -19,9 +19,3 @@ TODO
 - Generate absolutely positioned container to append elements to while they fall, if reset is enabled, then return to document in space they were previously positioned (use a placeholder element with no dimension to hold it’s spot with a uniquely generated ID, saved in the object for the drop-me element.)
 - Speed should build up over time (use an acceleration constant, which can be altered by data-* attribute)
 
-
-OPTIONS
-- Will Reset, Boolean
-- Spin, Boolean
-- Time to reset, Number
-- Speed, Number
