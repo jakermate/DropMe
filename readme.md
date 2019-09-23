@@ -1,5 +1,5 @@
-##Drop Me
-###Break your page apart
+## Drop Me
+### Break your page apart
 
 Library focused on allowing a developer to integrate a mechanic via classname whereby the user can click on an element and have it fall off of the page.
 
