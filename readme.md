@@ -16,7 +16,7 @@ Here's what it does:
 
 ### About Drop Me
 
-Drop me is an event-based library for building interactive web pages.
+Drop me is an event-based library for building interactive web pages.  Interaction with the library is based around the use of html element class and data-attributes.
 
 
 
@@ -32,7 +32,10 @@ Drop me is an event-based library for building interactive web pages.
 
 
 ### Installation
-
+```html
+    <script src="bundle.js">
+    </body>
+```
 
 
 
