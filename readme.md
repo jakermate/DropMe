@@ -32,6 +32,11 @@ Drop me is an event-based library for building interactive web pages.  Interacti
 
 
 ### Installation
+---
+#### Browser Friendly
+Download the minified version of the library and include in script tag at end of page body.
+
+
 ```html
     <script src="bundle.js">
     </body>
