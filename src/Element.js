@@ -83,6 +83,11 @@ export default class Element{
         return true // true returned for element being killed
     }
 
+    // events
+    click(){
+        console.log('new click handler')
+    }
+
 
 
     placeInContainerElement(target, dropContainer){
@@ -103,7 +108,9 @@ export default class Element{
     }
     removeClone(){
         this.CLONE.parentNode.removeChild(this.CLONE)
-        this.ELEMENT.style.visibility = 'visible'
+        if(this.reset === true){
+            this.ELEMENT.style.visibility = 'visible'
+        }
     }
     resetDelay(){
         setTimeout(()=>{

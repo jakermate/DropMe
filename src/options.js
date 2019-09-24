@@ -7,8 +7,19 @@ export default class Options{
             case `true`:
                 this.reset = true
                 break
-            default:
+            case `false`:
                 this.reset = false
+                break
+            default:
+                this.reset = true
+        }
+
+        let resetDelay = element.dataset.dropResetDelay
+        if(resetDelay != null || undefined){
+            this.resetDelay = resetDelay
+        }
+        else{
+            this.resetDelay = 1000 // default to 1 second
         }
 
         let spin = element.dataset.dropSpin
@@ -56,9 +67,20 @@ export default class Options{
                 this.popUp = 500
         }
 
+        let shadow = element.dataset.dropShadow
+        switch(shadow){
+            case `true`:
+                this.shadow = true
+                break
+            default:
+                this.shadow = false
+        }
        
         this.timeToReset = 3000  // time in ms until object gets replaced from where it fell
        
         this.popSide = 30
     } 
+
+    
+
 }

@@ -108,7 +108,8 @@ class Element {
     this.popUp = optionsObj.popUp;
     this.popSide = optionsObj.popSide;
     this.reset = optionsObj.reset;
-    this.timeToRESET = optionsObj.timeToReset;
+    this.resetDelay = optionsObj.resetDelay;
+    this.shadow = optionsObj.shadow;
     this.ELEMENT = element;
     this.CLONE = this.cloneElement(this.ELEMENT);
     this.TICKRATE = 60; // animation update interval
@@ -116,6 +117,7 @@ class Element {
     this.running = false; // initial running state
 
     this.elementID = element.getAttribute('data-drop-id'); // element ID
+    // this.CLONE.style.boxShadow = `5px 5px 40px rgba(0,0,0,.3)`
 
     this.x = 0;
     this.y = 0;
@@ -156,7 +158,8 @@ class Element {
     if (this.y > window.innerHeight) {
       this.__stopTimer__();
     }
-  }
+  } // run simulation
+
 
   __starttimer__() {
     this.running = true;
@@ -169,6 +172,11 @@ class Element {
     this.running = false;
     this.removeClone();
     return true; // true returned for element being killed
+  } // events
+
+
+  click() {
+    console.log('new click handler');
   }
 
   placeInContainerElement(target, dropContainer) {
@@ -194,7 +202,14 @@ class Element {
 
   removeClone() {
     this.CLONE.parentNode.removeChild(this.CLONE);
-    this.ELEMENT.style.visibility = 'visible';
+
+    if (this.reset === true) {
+      this.ELEMENT.style.visibility = 'visible';
+    }
+  }
+
+  resetDelay() {
+    setTimeout(() => {}, this.resetDelay);
   }
 
 }
@@ -226,12 +241,20 @@ class Container {
     return this.elements.indexOf(newEl);
   }
 
+  addAllElements(nodeList) {}
+
   removeElement(index) {
     this.elements.splice(index, 1);
   }
 
   getIndex(dataDropId) {
     return this.elements.indexOf(dataDropId);
+  }
+
+  addClickHandlers() {
+    this.elements.forEach(element => {
+      element.addEventListener('click');
+    });
   }
 
 }
@@ -393,8 +416,20 @@ class Options {
         this.reset = true;
         break;
 
-      default:
+      case `false`:
         this.reset = false;
+        break;
+
+      default:
+        this.reset = true;
+    }
+
+    let resetDelay = element.dataset.dropResetDelay;
+
+    if (resetDelay != null || undefined) {
+      this.resetDelay = resetDelay;
+    } else {
+      this.resetDelay = 1000; // default to 1 second
     }
 
     let spin = element.dataset.dropSpin;
@@ -457,6 +492,17 @@ class Options {
         this.popUp = 500;
     }
 
+    let shadow = element.dataset.dropShadow;
+
+    switch (shadow) {
+      case `true`:
+        this.shadow = true;
+        break;
+
+      default:
+        this.shadow = false;
+    }
+
     this.timeToReset = 3000; // time in ms until object gets replaced from where it fell
 
     this.popSide = 30;
@@ -477,6 +523,7 @@ class Options {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Placeholders; });
 class Placeholders {
+  // leaving in case of use-cases where a blank placeholder might be necessary
   constructor() {
     this.placeholders = [];
     this.indexes = {};

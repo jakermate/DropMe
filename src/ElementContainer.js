@@ -10,7 +10,9 @@ export default class Container{
         this.elements.push(newEl)
         return this.elements.indexOf(newEl)
     }
-    
+    addAllElements(nodeList){
+
+    }
 
     removeElement(index){
         this.elements.splice(index,1)
@@ -18,5 +20,10 @@ export default class Container{
     
     getIndex(dataDropId){
         return this.elements.indexOf(dataDropId)
+    }
+    addClickHandlers(){
+        this.elements.forEach((element)=>{
+            element.addEventListener('click', )
+        })
     }
 }
