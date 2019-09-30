@@ -1,3 +1,9 @@
+<h1 align='center'>
+    <a href="">
+        <img src='res/dropme.svg'>
+    </a>
+</h1>
+
 ## Drop Me v0.1
 ### Break your page apart
 
