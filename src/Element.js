@@ -7,31 +7,34 @@ export default class Element{
 
         this.spin = optionsObj.spin
         this.speed = optionsObj.speed
-        this.popUp = optionsObj.popUp
-        this.popSide = optionsObj.popSide
+        this.initialVelY = optionsObj.style
+        this.popSide = optionsObj.popSide 
         this.reset = optionsObj.reset
         this.resetDelay = optionsObj.resetDelay
         this.shadow = optionsObj.shadow
+        this.threeD = optionsObj.threeD
         
 
 
-        this.ELEMENT = element
-        this.CLONE = this.cloneElement(this.ELEMENT)
+        this.ELEMENT = element // original element to be hidden
+        this.CLONE = this.cloneElement(this.ELEMENT) // copy element to be dropper
+        this.CHILDREN = this.findChildren(this.ELEMENT)
 
         this.TICKRATE = 60 // animation update interval
 
         this.running = false // initial running state
 
         this.elementID = element.getAttribute('data-drop-id') // element ID
-        // this.CLONE.style.boxShadow = `5px 5px 40px rgba(0,0,0,.3)`
+        // this.CLONE.style.boxShadow = `5px 5px 10px rgba(0,0,0,.3)`
 
         this.x = 0
         this.y = 0
+        this.z = 0
         this.orientation = 0
 
 
         this.velX = this.popSide
-        this.velY = -this.popUp
+        this.velY = -this.initialVelY
 
 
         this.__starttimer__() // start time upon initialization
@@ -61,7 +64,7 @@ export default class Element{
 
         // apply styles by requesting new frame
         requestAnimationFrame(()=>{
-            this.CLONE.style.transform = `translateY(${this.y}px) translateX(${this.x}px) rotate(${this.orientation}deg)`
+            this.CLONE.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) rotate3d(1,1,1,${this.orientation}deg)`
         })
         
         // if element has fallen length greater than height of page, stop timer
@@ -108,14 +111,24 @@ export default class Element{
     }
     removeClone(){
         this.CLONE.parentNode.removeChild(this.CLONE)
-        if(this.reset === true){
-            this.ELEMENT.style.visibility = 'visible'
-        }
+        this.ELEMENT.style.visibility = ''
+        
     }
     resetDelay(){
         setTimeout(()=>{
 
         }, this.resetDelay)
+    }
+
+    findChildren(element){
+        let allChildren = [] // array to hold recursively found children
+        let elementChildren = element.childNodes
+        allChildren = [...elementChildren]
+
+
+
+        return allChildren
+
     }
 
 }
