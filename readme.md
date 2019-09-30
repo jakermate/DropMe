@@ -1,6 +1,6 @@
 <h1 align='center'>
     <a href="">
-        <img src='res/dropme.svg'>
+        <img src='res/dropme.svg' width="500px">
     </a>
 </h1>
 
