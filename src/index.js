@@ -70,14 +70,11 @@ function restyleElement(element){
     
 // FUNCTION TO INITIATE DROP 
 function dropMe(event){
+    
     console.log('dropping')
     // store target element in variable using event
     let target = event.target
     
-    // crates new placeholder div with data-drop-id set as main ID and styled dimensions
-    // based on target elements offset dimensions
-    let placeholderEl = returnPlaceholder(event.target.getAttribute('data-drop-id'), dimensioner.returnDimensionObject(target))
-
     PLACEHOLDERS.createPlaceholder(target) // pass in dropped element to clone for placeholder
     // place target element in CONTAINER object
     DROPBOX.addNewElement(target)
